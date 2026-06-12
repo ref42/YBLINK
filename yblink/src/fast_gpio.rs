@@ -30,6 +30,7 @@ const ACTIVITY_LED: u32 = 1 << PIN_ACTIVITY_LED;
 const OUTPUT_MASK_A: u32 = SWCLK_TCK | SWDIO_TMS | TDI | ACTIVITY_LED;
 const OUTPUT_MASK_B: u32 = NRESET;
 const DEFAULT_SWJ_CLOCK_HZ: u32 = 8_000_000;
+const MAX_STABLE_SWJ_CLOCK_HZ: u32 = 8_000_000;
 const PROBE_RS_DEFAULT_SWJ_CLOCK_HZ: u32 = 1_000_000;
 const ACTIVITY_LED_ACTIVE_HIGH: bool = false;
 const ACTIVITY_LED_MODE: ActivityLedMode = ActivityLedMode::BlinkBusy;
@@ -988,7 +989,7 @@ fn normalize_swj_clock_hz(hz: u32) -> u32 {
     if hz == PROBE_RS_DEFAULT_SWJ_CLOCK_HZ {
         DEFAULT_SWJ_CLOCK_HZ
     } else {
-        hz
+        hz.min(MAX_STABLE_SWJ_CLOCK_HZ)
     }
 }
 
