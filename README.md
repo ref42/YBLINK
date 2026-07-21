@@ -12,15 +12,6 @@ Current stable USB identity:
 | Serial | `YBLINK` |
 | Firmware version | `0.1.0` |
 
-## Features
-
-- CMSIS-DAP v2 bulk endpoint, 512-byte USB-HS packets.
-- SWD target access on PA27/PA28.
-- JTAG target access on PA27/PA28/PA29/PA26.
-- Hardware nRESET control on PB10.
-- CDC ACM serial bridge on UART0, PA00/PA01.
-- UART0 RX uses HDMA with a 96 KiB circular buffer.
-
 ## Pin Map
 
 The firmware drives the HPM5301EVKLite J3 GPIO header. The target board must be
