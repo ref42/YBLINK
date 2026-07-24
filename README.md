@@ -4,7 +4,7 @@
 
 YBLINK（Yet Better Link）是运行在 HPM5301 上的纯 Rust CMSIS-DAP v2 调试器固件。当前稳定版本使用 USB High Speed、FGPIO 软件模拟 SWD/JTAG，并提供一个 CDC ACM USB 转 UART 串口桥。
 
-## 当前 USB 信息
+当前稳定 USB 信息：
 
 | 字段 | 值 |
 | --- | --- |
@@ -12,18 +12,6 @@ YBLINK（Yet Better Link）是运行在 HPM5301 上的纯 Rust CMSIS-DAP v2 调�
 | Product | `YBLINK CMSIS-DAP` |
 | Serial | `YBLINK` |
 | Firmware version | `0.1.0` |
-
-## 功能状态
-
-| 功能 | 状态 |
-| --- | --- |
-| CMSIS-DAP v2 | 可用，USB Bulk 传输 |
-| SWD | 可用，默认 8 MHz |
-| JTAG | 可用 |
-| CDC ACM 串口桥 | 可用，默认 1,000,000 baud |
-| 活动指示灯 | PA10，低电平点亮 |
-
-固件会把 probe-rs 默认请求的 1 MHz 映射为 8 MHz。为了兼容 STM32H723ZGT6，目前所有大于 8 MHz 的 SWD/JTAG 请求都会被限制为 8 MHz。
 
 ## 引脚映射
 
@@ -63,7 +51,23 @@ YBLINK（Yet Better Link）是运行在 HPM5301 上的纯 Rust CMSIS-DAP v2 调�
 
 ## 构建
 
-第一次构建前安装 RISC-V target：
+```bash
+cargo build -p yblink --release
+```
+
+## 自制硬件
+
+| <img src="hardware_altium_project/YBLINK_TOP.png" width="480"> | <img src="hardware_altium_project/YBLINK_BOTTOM.png" width="480"> |
+| :-----------------------------------------------------: | :-----------------------------------------------------: |
+
+自制板已经手焊并测试通过。原理图、PCB 和 Gerber 文件在 [hardware_altium_project](hardware_altium_project) 目录中。用于烧录 YBLINK 固件的 5 个过孔从左到右是：TMS、TCK、TDI、TDO、TRST。
+
+| <img src="images/top.jpg" width="480"> | <img src="images/bottom.jpg" width="480"> |
+| :-----------------------------------------------------: | :-----------------------------------------------------: |
+
+## 从新仓库构建
+
+第一次构建前安装 Rust RISC-V target：
 
 ```bash
 rustup target add riscv32imafc-unknown-none-elf
@@ -81,43 +85,12 @@ cargo build -p yblink --release
 target/riscv32imafc-unknown-none-elf/release/yblink
 ```
 
-## 烧录 YBLINK 固件
-
-使用外部调试器给 HPM5301 烧录：
+使用外部调试器烧录：
 
 ```bash
 probe-rs download --chip HPM5301 --protocol jtag target/riscv32imafc-unknown-none-elf/release/yblink
-probe-rs reset --chip HPM5301 --protocol jtag
 ```
 
-仓库也保留了一个预编译固件：
+## 直接烧录
 
-```text
-firmware/yblink
-```
-
-## 使用 YBLINK 烧录目标芯片
-
-查看 probe：
-
-```bash
-probe-rs list
-```
-
-烧录目标芯片示例：
-
-```bash
-probe-rs download --chip STM32F405RG --speed 8000 --probe 1209:5301:YBLINK app.elf
-```
-
-如果不指定 `--speed`，probe-rs 的默认 1 MHz 请求会被固件映射为 8 MHz。
-
-## 自制硬件
-
-| <img src="hardware_altium_project/YBLINK_TOP.png" width="480"> | <img src="hardware_altium_project/YBLINK_BOTTOM.png" width="480"> |
-| :-----------------------------------------------------: | :-----------------------------------------------------: |
-
-自制板已经手焊并测试通过。原理图、PCB 和 Gerber 文件在 [hardware_altium_project](hardware_altium_project) 目录中。用于烧录 YBLINK 固件的 5 个过孔从左到右是：TMS、TCK、TDI、TDO、TRST。
-
-| <img src="images/top.jpg" width="480"> | <img src="images/bottom.jpg" width="480"> |
-| :-----------------------------------------------------: | :-----------------------------------------------------: |
+预编译固件在 `firmware/yblink`，可以直接用 `probe-rs` 烧录。
